@@ -1,56 +1,58 @@
-const User = require("../models/User.js");
+const Comment = require("../models/Comment.js");
 const Post = require("../models/Post.js");
 
 const resolvers = {
   Query: {
-    users: async () => await User.findAll({}),
-    user: async (parent, args) => {
-      const user = await User.findByPk(args.id);
-      let posts = [];
-
-      try {
-        posts = await Post.findAll({
-          where: {
-            userId: user.id,
-          },
-        });
-        console.log(posts);
-      } catch (e) {}
-
-      return {
-        ...user.toJSON(),
-        posts,
-      };
+    posts: async () => {
+      return await Post.findAll();
+    },
+    post: async (parent, args) => {
+      const post = await Post.findByPk(args.id, {
+        include: [{ model: Comment, as: "comments" }]
+      });
+      return post;
+    },
+    comments: async (parent, args) => {
+      return await Comment.findAll({
+        where: {
+          postId: args.postId,
+        },
+      });
+    },
+    comment: async (parent, args) => {
+      return await Comment.findByPk(args.id);
     },
   },
+  
   Mutation: {
-    createUser: async (parent, args) => {
-      const { firstName, lastName, age } = args;
-      const newUser = User.build({
-        firstName,
-        lastName,
-        age,
-      });
-      await newUser.save();
-      return newUser;
-    },
     createPost: async (parent, args) => {
-      const { text, userId } = args;
+      const { author, text, url } = args;
       const newPost = Post.build({
+        author,
         text,
-        userId: userId,
+        url,
       });
       await newPost.save();
       return newPost;
     },
-    deleteUser: async (parent, args) => {
-      const { id } = args;
-      const result = await User.destroy({
-        where: {
-          id,
-        },
+    createComment: async (parent, args) => {
+      const { author, content, postId } = args;
+      const newComment = Comment.build({
+        author,
+        content,
+        postId,
       });
-      return result;
+      await newComment.save();
+      return newComment;
+    },
+    deletePost: async (parent, args) => {
+      const { id } = args;
+      const post = await Post.findByPk(id);
+      if (!post) {
+        throw new Error("Post not found");
+      }
+      await post.destroy();
+      return post;
     },
   },
 };

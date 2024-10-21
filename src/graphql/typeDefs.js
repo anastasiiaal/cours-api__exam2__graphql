@@ -2,27 +2,31 @@ const gql = require("graphql-tag");
 
 const typeDefs = gql`
   type Query {
-    users: [User]
-    user(id: ID): User
-  }
-
-  type User {
-    id: ID
-    firstName: String
-    lastName: String
-    age: Int
     posts: [Post]
+    post(id: ID!): Post
+    comments(postId: ID!): [Comment]
+    comment(id: ID!): Comment
   }
 
   type Post {
     id: ID
+    author: String
     text: String
+    url: String
+    comments: [Comment]
+  }
+
+  type Comment {
+    id: ID
+    author: String
+    content: String
+    post: Post  # Each comment belongs to one post
   }
 
   type Mutation {
-    createUser(firstName: String, lastName: String, age: Int): User
-    createPost(text: String, userId: ID): Post
-    deleteUser(id: ID): User
+    createPost(author: String, text: String, url: String): Post
+    createComment(author: String, content: String, postId: ID!): Comment
+    deletePost(id: ID!): Post
   }
 `;
 
