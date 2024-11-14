@@ -1,4 +1,5 @@
 import { useQuery, gql } from '@apollo/client';
+import { Link } from 'react-router-dom';
 
 const GET_POSTS = gql`
     query GetPosts {
@@ -42,7 +43,9 @@ export default function Home() {
                                 <p className="">
                                     By {post.author} <span className="mx-2">•</span>
                                     { new Date(post.createdAt).toLocaleString() } <span className="mx-2">•</span>
-                                    <a href={post.id} className="text-blue-500 hover:underline">See comments</a>
+                                    <Link to={`/post/${post.id}`} className="text-blue-500 hover:underline">
+                                        See comments
+                                    </Link>
                                 </p>
                             </div>
                         ))

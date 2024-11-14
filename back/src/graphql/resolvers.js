@@ -1,5 +1,4 @@
-const Comment = require("../models/Comment.js");
-const Post = require("../models/Post.js");
+const { Post, Comment } = require("../models");
 
 const resolvers = {
   Query: {
@@ -10,11 +9,22 @@ const resolvers = {
         createdAt: post.createdAt.toISOString(),
       }));
     },
-    post: async (parent, args) => {
-      const post = await Post.findByPk(args.id, {
-        include: [{ model: Comment, as: "comments" }]
+    post: async (parent, { id }) => {
+      const post = await Post.findByPk(id, {
+        include: [{ model: Comment, as: "comments" }],
       });
-      return post;
+      
+      if (post) {
+        return {
+          ...post.toJSON(),
+          createdAt: post.createdAt.toISOString(),
+          comments: post.comments.map(comment => ({
+            ...comment.toJSON(),
+            createdAt: comment.createdAt.toISOString(),
+          })),
+        };
+      }
+      return null;
     },
     comments: async (parent, args) => {
       return await Comment.findAll({

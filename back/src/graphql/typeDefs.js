@@ -22,6 +22,7 @@ const typeDefs = gql`
     author: String
     content: String
     post: Post  # Each comment belongs to one post
+    createdAt: String
   }
 
   type Mutation {

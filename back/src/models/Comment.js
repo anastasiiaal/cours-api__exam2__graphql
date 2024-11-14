@@ -22,8 +22,4 @@ const Comment = sequelize.define("Comment", {
   },
 });
 
-Comment.belongsTo(Post, {
-  foreignKey: "postId",
-});
-
 module.exports = Comment;
