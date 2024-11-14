@@ -1,14 +1,15 @@
 import { useQuery, gql } from '@apollo/client';
 
 const GET_POSTS = gql`
-  query GetPosts {
-    posts {
-      id
-      author
-      text
-      url
+    query GetPosts {
+        posts {
+            id
+            author
+            text
+            url
+            createdAt
+        }
     }
-  }
 `;
 
 export default function Home() {
@@ -22,19 +23,35 @@ export default function Home() {
             <div className="container">
                 <h2 className="text-2xl font-bold mb-4">All Posts</h2>
                 <div className="grid gap-6">
-                    {data.posts.map((post) => (
-                        <div key={post.id} className="p-4 bg-white rounded shadow">
-                            <h3 className="font-semibold text-lg">{post.author}</h3>
-                            <p>{post.text}</p>
-                            {post.url && (
-                                <a href={post.url} className="text-blue-500 hover:underline">
-                                    Read more
-                                </a>
-                            )}
-                        </div>
-                    ))}
+                    {data.posts.length > 0 ? (
+                        data.posts.map((post) => (
+                            <div key={post.id} className="p-4 bg-white rounded shadow">
+                                <h3 className="font-semibold text-lg">
+                                    {post.text}
+                                    {post.url && (
+                                        <a
+                                            href={post.url.startsWith('http') ? post.url : `https://${post.url}`}
+                                            className="font-normal text-slate-400 ml-2"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                        >
+                                            ({post.url})
+                                        </a>
+                                    )}
+                                </h3>
+                                <p className="">
+                                    By {post.author} <span className="mx-2">•</span>
+                                    { new Date(post.createdAt).toLocaleString() } <span className="mx-2">•</span>
+                                    <a href={post.id} className="text-blue-500 hover:underline">See comments</a>
+                                </p>
+                            </div>
+                        ))
+                    ) : (
+                        <p>No posts yet</p>
+                    )}
                 </div>
             </div>
+
         </div>
     );
 }

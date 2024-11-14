@@ -6,7 +6,7 @@ export default function Layout() {
             <header className="bg-sky-800 text-white py-8">
                 <div className="container">
                     <h1 className="font-bold text-xl">
-                        <Link to="/" className="text-white hover:underline">
+                        <Link to="/" className="text-white hover:opacity-85">
                             Blog
                         </Link>
                     </h1>
