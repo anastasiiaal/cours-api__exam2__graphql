@@ -1,5 +1,6 @@
 import { useQuery, gql } from '@apollo/client';
 import { Link } from 'react-router-dom';
+import { format } from 'date-fns';
 
 const GET_POSTS = gql`
     query GetPosts {
@@ -42,7 +43,7 @@ export default function Home() {
                                 </h3>
                                 <p className="">
                                     By {post.author} <span className="mx-2">•</span>
-                                    { new Date(post.createdAt).toLocaleString() } <span className="mx-2">•</span>
+                                    { format(new Date(post.createdAt), 'dd MMM yyyy HH:mm') } <span className="mx-2">•</span>
                                     <Link to={`/post/${post.id}`} className="text-blue-500 hover:underline">
                                         See comments
                                     </Link>
