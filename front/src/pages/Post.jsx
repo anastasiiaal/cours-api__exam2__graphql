@@ -15,6 +15,7 @@ const GET_POST = gql`
                 id
                 author
                 content
+                createdAt
             }
         }
     }
@@ -107,7 +108,7 @@ export default function Post() {
                 {post.comments.length > 0 ? (
                     post.comments.map((comment) => (
                         <div key={comment.id} className="border-t border-gray-300 mt-4 pt-4">
-                            <p className="font-semibold">{comment.author} • <span className="font-normal text-slate-400">{ new Date(Date.parse(post.createdAt)).toLocaleString() }</span></p>
+                            <p className="font-semibold">{comment.author} • <span className="font-normal text-slate-400"> { format(new Date(comment.createdAt), 'dd MMM yyyy HH:mm') }</span></p>
                             <p>{comment.content}</p>
                         </div>
                     ))
