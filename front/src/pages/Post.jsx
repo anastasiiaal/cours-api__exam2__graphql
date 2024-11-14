@@ -1,32 +1,45 @@
-import { useQuery, gql } from '@apollo/client';
+import { useQuery, useMutation, gql } from '@apollo/client';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { format } from 'date-fns';
 
 const GET_POST = gql`
-  query GetPost($id: ID!) {
-    post(id: $id) {
-      id
-      author
-      text
-      url
-      createdAt
-      comments {
-        id
-        author
-        content
-      }
+    query GetPost($id: ID!) {
+        post(id: $id) {
+            id
+            author
+            text
+            url
+            createdAt
+            comments {
+                id
+                author
+                content
+            }
+        }
     }
-  }
+`;
+
+const ADD_COMMENT = gql`
+    mutation AddComment($postId: ID!, $author: String!, $content: String!) {
+        createComment(postId: $postId, author: $author, content: $content) {
+            id
+            author
+            content
+        }
+    }
 `;
 
 export default function Post() {
-    const { id } = useParams(); // Get the post ID from the URL
-    const navigate = useNavigate(); // For redirection
+    const { id } = useParams();
+    const navigate = useNavigate();
     const { loading, error, data } = useQuery(GET_POST, {
         variables: { id },
     });
+    const [addComment] = useMutation(ADD_COMMENT);
+    const [author, setAuthor] = useState('');
+    const [content, setContent] = useState('');
 
-    // Redirect to "/" if the post is not found
     useEffect(() => {
         if (!loading && !error && !data?.post) {
             navigate('/');
@@ -37,6 +50,16 @@ export default function Post() {
     if (error) return <p>Error: {error.message}</p>;
 
     const post = data.post;
+
+    const handleAddComment = async (e) => {
+        e.preventDefault();
+        await addComment({
+            variables: { postId: id, author, content },
+            refetchQueries: [{ query: GET_POST, variables: { id } }],
+        });
+        setAuthor('');
+        setContent('');
+    };
 
     return (
         <div className="section">
@@ -52,8 +75,34 @@ export default function Post() {
                     </a>
                 )}
                 <p className="text-sm text-gray-500 mt-2">
-                    By {post.author} • { new Date(post.createdAt).toLocaleString()  }
+                    By {post.author} • { format(new Date(post.createdAt), 'dd MMM yyyy HH:mm') }
                 </p>
+
+                <form onSubmit={handleAddComment} className="mt-4">
+                    <div className="mb-2">
+                        <input
+                            type="text"
+                            value={author}
+                            onChange={(e) => setAuthor(e.target.value)}
+                            className="w-full p-2 border rounded"
+                            placeholder="Author"
+                            required
+                        />
+                    </div>
+                    <div className="mb-2">
+                        <textarea
+                            value={content}
+                            onChange={(e) => setContent(e.target.value)}
+                            className="w-full p-2 border rounded"
+                            placeholder="Comment"
+                            required
+                        />
+                    </div>
+                    <button type="submit" className="bg-sky-700 text-white px-4 py-2 rounded hover:bg-sky-600">
+                        Add Comment
+                    </button>
+                </form>
+
                 <h2 className="text-xl font-semibold mt-6">Comments</h2>
                 {post.comments.length > 0 ? (
                     post.comments.map((comment) => (
