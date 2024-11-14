@@ -14,6 +14,7 @@ const typeDefs = gql`
     text: String
     url: String
     comments: [Comment]
+    createdAt: String
   }
 
   type Comment {

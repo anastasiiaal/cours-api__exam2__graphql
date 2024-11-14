@@ -4,7 +4,11 @@ const Post = require("../models/Post.js");
 const resolvers = {
   Query: {
     posts: async () => {
-      return await Post.findAll();
+      const posts = await Post.findAll();
+      return posts.map(post => ({
+        ...post.toJSON(),
+        createdAt: post.createdAt.toISOString(),
+      }));
     },
     post: async (parent, args) => {
       const post = await Post.findByPk(args.id, {
