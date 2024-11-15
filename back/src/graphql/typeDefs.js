@@ -2,7 +2,7 @@ const gql = require("graphql-tag");
 
 const typeDefs = gql`
   type Query {
-    posts: [Post]
+    posts(sort: String): [Post]
     post(id: ID!): Post
     comments(postId: ID!): [Comment]
     comment(id: ID!): Comment

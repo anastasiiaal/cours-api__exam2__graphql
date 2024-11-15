@@ -2,8 +2,13 @@ const { Post, Comment } = require("../models");
 
 const resolvers = {
   Query: {
-    posts: async () => {
-      const posts = await Post.findAll();
+    posts: async (parent, args) => {
+      const order = args.sort === 'OLD' ? 'ASC' : 'DESC';
+
+      const posts = await Post.findAll({
+        order: [['createdAt', order]],
+      });
+
       return posts.map(post => ({
         ...post.toJSON(),
         createdAt: post.createdAt.toISOString(),
