@@ -104,7 +104,7 @@ export default function Post() {
                     </button>
                 </form>
 
-                <h2 className="text-xl font-semibold mt-6">Comments</h2>
+                <h2 className="text-xl font-semibold mt-6">Comments ({ post.comments.length })</h2>
                 {post.comments.length > 0 ? (
                     post.comments.map((comment) => (
                         <div key={comment.id} className="border-t border-gray-300 mt-4 pt-4">
