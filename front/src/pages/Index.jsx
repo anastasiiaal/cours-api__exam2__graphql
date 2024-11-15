@@ -1,10 +1,11 @@
+import { useState } from 'react';
 import { useQuery, gql } from '@apollo/client';
 import { Link } from 'react-router-dom';
 import { format } from 'date-fns';
 
 const GET_POSTS = gql`
-    query GetPosts {
-        posts {
+    query GetPosts($sort: String) {
+        posts(sort: $sort) {
             id
             author
             text
@@ -15,7 +16,15 @@ const GET_POSTS = gql`
 `;
 
 export default function Home() {
-    const { loading, error, data } = useQuery(GET_POSTS);
+    const [sortOrder, setSortOrder] = useState('NEW');
+    const { loading, error, data, refetch } = useQuery(GET_POSTS, {
+        variables: { sort: sortOrder },
+    });
+
+    const handleSortChange = (sort) => {
+        setSortOrder(sort);
+        refetch({ sort });
+    };
 
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Error: {error.message}</p>;
@@ -29,6 +38,30 @@ export default function Home() {
                         Add new post
                     </Link>
                 </div>
+
+                <div className="flex mb-4 space-x-4">
+                    <button
+                        onClick={() => handleSortChange('NEW')}
+                        className={`px-4 py-1 rounded- ${
+                            sortOrder === 'NEW'
+                                ? 'bg-sky-700 text-white'
+                                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                        }`}
+                    >
+                        New
+                    </button>
+                    <button
+                        onClick={() => handleSortChange('OLD')}
+                        className={`px-4 py-1 rounded- ${
+                            sortOrder === 'OLD'
+                                ? 'bg-sky-700 text-white'
+                                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                        }`}
+                    >
+                        Old
+                    </button>
+                </div>
+
                 <div className="grid gap-6">
                     {data.posts.length > 0 ? (
                         data.posts.map((post) => (
