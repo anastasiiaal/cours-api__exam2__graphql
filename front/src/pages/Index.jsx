@@ -42,7 +42,7 @@ export default function Home() {
                 <div className="flex mb-4 space-x-4">
                     <button
                         onClick={() => handleSortChange('NEW')}
-                        className={`px-4 py-1 rounded- ${
+                        className={`px-4 py-1 rounded ${
                             sortOrder === 'NEW'
                                 ? 'bg-sky-700 text-white'
                                 : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
@@ -52,7 +52,7 @@ export default function Home() {
                     </button>
                     <button
                         onClick={() => handleSortChange('OLD')}
-                        className={`px-4 py-1 rounded- ${
+                        className={`px-4 py-1 rounded ${
                             sortOrder === 'OLD'
                                 ? 'bg-sky-700 text-white'
                                 : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
