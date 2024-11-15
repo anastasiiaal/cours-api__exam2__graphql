@@ -23,7 +23,12 @@ export default function Home() {
     return (
         <div className="section">
             <div className="container">
-                <h2 className="text-2xl font-bold mb-4">All Posts</h2>
+                <div className="flex justify-between items-center mb-4">
+                    <h2 className="text-2xl font-bold">All Posts</h2>
+                    <Link to="new-post" className="bg-sky-700 text-white px-4 py-2 rounded hover:bg-sky-600">
+                        Add new post
+                    </Link>
+                </div>
                 <div className="grid gap-6">
                     {data.posts.length > 0 ? (
                         data.posts.map((post) => (
@@ -55,7 +60,6 @@ export default function Home() {
                     )}
                 </div>
             </div>
-
         </div>
     );
 }
